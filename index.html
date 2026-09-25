@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodePath — Найди свой путь в IT</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0f1220;
+    --bg-2: #171a2e;
+    --card: #1e2238;
+    --card-hover: #262b47;
+    --text: #e8eaf3;
+    --muted: #9aa0b8;
+    --accent: #7c5cff;
+    --accent-2: #22d3ee;
+    --border: #2a2f4a;
+    --shadow: 0 10px 30px rgba(0,0,0,0.35);
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+    background: radial-gradient(1200px 600px at 10% -10%, rgba(124,92,255,0.18), transparent 60%),
+                radial-gradient(900px 500px at 100% 0%, rgba(34,211,238,0.12), transparent 60%),
+                var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+  header {
+    padding: 28px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .logo {
+    font-size: 1.6rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    cursor: pointer;
+  }
+  .nav-back {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: 0.2s;
+  }
+  .nav-back:hover { background: var(--card); border-color: var(--accent); }
+  .nav-back.hidden { display: none; }
+
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 24px 80px;
+  }
+  .page { animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero {
+    text-align: center;
+    padding: 40px 0 50px;
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    font-weight: 800;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+  }
+  .hero h1 span {
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero p {
+    color: var(--muted);
+    font-size: 1.1rem;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .choice-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-top: 40px;
+  }
+  .choice-card {
+    background: linear-gradient(145deg, var(--card), var(--bg-2));
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .choice-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(124,92,255,0.15), rgba(34,211,238,0.08));
+    opacity: 0;
+    transition: 0.3s;
+  }
+  .choice-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--accent);
+    box-shadow: var(--shadow);
+  }
+  .choice-card:hover::before { opacity: 1; }
+  .choice-icon {
+    font-size: 3.5rem;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .choice-card h2 {
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .choice-card p {
+    color: var(--muted);
+    position: relative;
+  }
+
+  .section-title {
+    font-size: 2rem;
+    margin: 30px 0 20px;
+    font-weight: 700;
+  }
+  .section-subtitle {
+    color: var(--muted);
+    margin-bottom: 30px;
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .item-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  .item-card:hover {
+    background: var(--card-hover);
+    border-color: var(--accent);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+  }
+  .item-card .tag {
+    display: inline-block;
+    background: rgba(124,92,255,0.15);
+    color: var(--accent-2);
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  .item-card h3 {
+    font-size: 1.25rem;
+    margin-bottom: 8px;
+  }
+  .item-card p {
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  /* Detail page */
+  .detail-header {
+    background: linear-gradient(135deg, var(--card), var(--bg-2));
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px;
+    margin-bottom: 30px;
+  }
+  .detail-header .tag {
+    display: inline-block;
+    background: rgba(34,211,238,0.15);
+    color: var(--accent-2);
+    padding: 6px 14px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .detail-header h1 {
+    font-size: 2.4rem;
+    margin-bottom: 14px;
+  }
+  .detail-header p {
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 800px;
+  }
+
+  .section-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+  .section-block h2 {
+    font-size: 1.4rem;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-block h2::before {
+    content: '';
+    width: 4px;
+    height: 22px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-2));
+    border-radius: 2px;
+  }
+  .section-block ul {
+    list-style: none;
+    padding: 0;
+  }
+  .section-block li {
+    padding: 10px 0 10px 28px;
+    position: relative;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+  }
+  .section-block li:last-child { border-bottom: none; }
+  .section-block li::before {
+    content: '▸';
+    position: absolute;
+    left: 8px;
+    color: var(--accent);
+    font-weight: bold;
+  }
+  .section-block p { color: var(--muted); }
+  .section-block p + p { margin-top: 10px; }
+
+  .task-card {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 12px;
+  }
+  .task-card .task-title {
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--accent-2);
+  }
+  .task-card p { color: var(--muted); font-size: 0.95rem; }
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .tool-item {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .tool-item .tool-name {
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .tool-item .tool-desc {
+    color: var(--muted);
+    font-size: 0.88rem;
+  }
+
+  footer {
+    text-align: center;
+    padding: 30px;
+    color: var(--muted);
+    font-size: 0.9rem;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+
+  @media (max-width: 600px) {
+    .detail-header { padding: 26px 20px; }
+    .detail-header h1 { font-size: 1.8rem; }
+    .section-block { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo" onclick="showPage('home')">⚡ CodePath</div>
+  <button class="nav-back hidden" id="backBtn" onclick="goBack()">← Назад</button>
+</header>
+
+<main id="app"></main>
+
+<footer>
+  © 2026 CodePath — твой проводник в мир программирования
+</footer>
+
+<script>
+// ===== ДАННЫЕ =====
+const languages = [
+  {
+    id: 'python', name: 'Python', tag: 'Универсальный',
+    short: 'Простой и читаемый язык. Подходит для новичков, используется в Data Science, веб-разработке, автоматизации и AI.',
+    full: 'Python — один из самых популярных языков в мире благодаря простому синтаксису и огромной экосистеме библиотек. На нём пишут веб-серверы (Django, Flask), анализируют данные (Pandas, NumPy), создают нейросети (PyTorch, TensorFlow), автоматизируют рутину и даже делают игры.',
+    start: [
+      'Установи Python с python.org и редактор VS Code',
+      'Пройди бесплатный курс "Поколение Python" на Stepik или Stepik "Python для начинающих"',
+      'Читай документацию и практикуйся каждый день по 30 минут',
+      'Создай свой первый проект: калькулятор, угадай число, Telegram-бот'
+    ],
+    tasks: [
+      { title: 'Задача 1: Сумма чисел', desc: 'Напиши программу, которая принимает два числа от пользователя и выводит их сумму.' },
+      { title: 'Задача 2: Чётные числа', desc: 'Выведи все чётные числа от 1 до 100 с помощью цикла.' },
+      { title: 'Задача 3: Палиндром', desc: 'Напиши функцию, которая проверяет, является ли строка палиндромом (читается одинаково в обе стороны).' },
+      { title: 'Задача 4: Словарь-переводчик', desc: 'Создай словарь с 5 словами и их переводом. Пользователь вводит слово — программа выдаёт перевод.' }
+    ]
+  },
+  {
+    id: 'javascript', name: 'JavaScript', tag: 'Веб',
+    short: 'Язык интернета. Работает в браузере и на сервере (Node.js). Основа современного веба.',
+    full: 'JavaScript — единственный язык программирования, который выполняется прямо в браузере. С его помощью делают интерактивные сайты, мобильные приложения (React Native), серверы (Node.js) и даже игры. Если хочешь во фронтенд или фуллстек — это must-have.',
+    start: [
+      'Открой браузер — JS уже там! Начни с консоли разработчика (F12)',
+      'Установи VS Code и научись отлаживать код в браузере',
+      'Изучи основы: переменные, функции, массивы, объекты, DOM',
+      'Сделай свой первый интерактивный сайт: часы, калькулятор, to-do лист'
+    ],
+    tasks: [
+      { title: 'Задача 1: Приветствие', desc: 'Создай страницу, где при загрузке появляется alert "Привет, [имя]!" с полем ввода имени.' },
+      { title: 'Задача 2: Смена темы', desc: 'Сделай кнопку, которая переключает тему страницы между светлой и тёмной.' },
+      { title: 'Задача 3: Счётчик кликов', desc: 'Создай кнопку и счётчик. При каждом клике число увеличивается на 1.' },
+      { title: 'Задача 4: Валидация email', desc: 'Напиши функцию, которая проверяет, является ли строка валидным email-адресом.' }
+    ]
+  },
+  {
+    id: 'java', name: 'Java', tag: 'Enterprise / Android',
+    short: 'Мощный язык для крупных проектов, Android-приложений и серверной разработки.',
+    full: 'Java — один из самых востребованных языков в корпоративном мире. На нём написаны банковские системы, крупные сервисы вроде Twitter и LinkedIn, а также Android-приложения. Строгая типизация и ООП делают код надёжным.',
+    start: [
+      'Установи JDK (версию 17 или 21) и IntelliJ IDEA Community',
+      'Изучи основы синтаксиса и ООП: классы, наследование, полиморфизм',
+      'Почитай книгу "Head First Java" или пройди курс на JavaRush',
+      'Сделай консольное приложение: банковский счёт, библиотека, игра'
+    ],
+    tasks: [
+      { title: 'Задача 1: Калькулятор', desc: 'Создай консольный калькулятор с операциями +, -, *, / и обработкой деления на ноль.' },
+      { title: 'Задача 2: Класс Student', desc: 'Создай класс Student с полями имя, возраст, оценки. Добавь метод для вычисления среднего балла.' },
+      { title: 'Задача 3: Сортировка', desc: 'Реализуй сортировку массива чисел методом пузырька (bubble sort).' },
+      { title: 'Задача 4: Список задач', desc: 'Напиши программу To-Do list с возможностью добавлять, удалять и отмечать задачи.' }
+    ]
+  },
+  {
+    id: 'cpp', name: 'C++', tag: 'Системный / Игры',
+    short: 'Быстрый и низкоуровневый язык. Используется в играх (Unreal Engine), ОС, embedded-системах.',
+    full: 'C++ даёт полный контроль над памятью и производительностью. На нём написаны Windows, игры AAA-класса, браузерные движки, торговые системы. Сложнее в изучении, но даёт глубокое понимание того, как работает компьютер.',
+    start: [
+      'Установи компилятор (GCC/MinGW) и IDE: VS Code + CMake или CLion',
+      'Начни с основ: переменные, указатели, ссылки, функции',
+      'Разберись с памятью: стек, куча, new/delete, умные указатели',
+      'Читай "Язык программирования C++" Страуструпа (позже) или "Ускоренный курс C++"'
+    ],
+    tasks: [
+      { title: 'Задача 1: Указатели', desc: 'Напиши программу, которая меняет значения двух переменных местами через указатели.' },
+      { title: 'Задача 2: Динамический массив', desc: 'Реализуй свой класс динамического массива (как std::vector) с методами push, pop, size.' },
+      { title: 'Задача 3: Связный список', desc: 'Создай односвязный список с операциями вставки, удаления и поиска.' },
+      { title: 'Задача 4: Игра "Жизнь"', desc: 'Реализуй игру "Жизнь" Конвея в консоли с использованием двумерных массивов.' }
+    ]
+  },
+  {
+    id: 'csharp', name: 'C#', tag: 'Игры / Enterprise',
+    short: 'Язык от Microsoft. Основа Unity (игры), .NET-приложений и корпоративной разработки.',
+    full: 'C# — современный, безопасный и мощный язык. На нём пишут игры в Unity (самый популярный движок для инди-разработчиков), десктопные приложения, веб-серверы на ASP.NET и мобильные приложения через MAUI.',
+    start: [
+      'Установи Visual Studio Community (бесплатная)',
+      'Начни с основ синтаксиса и ООП',
+      'Если интересны игры — поставь Unity и пройди официальные туториалы',
+      'Для веба — изучи ASP.NET Core'
+    ],
+    tasks: [
+      { title: 'Задача 1: Викторина', desc: 'Создай консольную викторину с 5 вопросами и подсчётом очков.' },
+      { title: 'Задача 2: Класс BankAccount', desc: 'Реализуй класс банковского счёта с методами пополнения, снятия и проверки баланса.' },
+      { title: 'Задача 3: Крестики-нолики', desc: 'Сделай игру крестики-нолики для двух игроков в консоли.' },
+      { title: 'Задача 4: Unity — прыгающий куб', desc: 'В Unity создай сцену, где куб прыгает по нажатию пробела.' }
+    ]
+  },
+  {
+    id: 'go', name: 'Go (Golang)', tag: 'Backend / Cloud',
+    short: 'Язык от Google. Быстрый, простой, идеален для микросервисов и высоконагруженных систем.',
+    full: 'Go создан для современных облачных сервисов. На нём написаны Docker, Kubernetes, Terraform. Простой синтаксис, встроенная конкурентность (горутины), быстрая компиляция. Отличный выбор для backend-разработчика.',
+    start: [
+      'Установи Go с go.dev и настрой VS Code с расширением Go',
+      'Пройди "A Tour of Go" — официальный интерактивный тур',
+      'Изучи горутины и каналы — это фишка языка',
+      'Сделай REST API с помощью Gin или стандартной библиотеки'
+    ],
+    tasks: [
+      { title: 'Задача 1: HTTP-сервер', desc: 'Напиши простой HTTP-сервер, который отвечает "Hello, World!" на /hello.' },
+      { title: 'Задача 2: Конкурентный счётчик', desc: 'Запусти 10 горутин, каждая увеличивает общий счётчик. Используй sync.Mutex.' },
+      { title: 'Задача 3: Парсер JSON', desc: 'Прочитай JSON-файл и выведи данные в консоль в отформатированном виде.' },
+      { title: 'Задача 4: URL-шортнер', desc: 'Сделай простой сервис сокращения ссылок с сохранением в память.' }
+    ]
+  },
+  {
+    id: 'rust', name: 'Rust', tag: 'Системный',
+    short: 'Современная замена C++. Безопасный, быстрый, популярный в инфраструктурных проектах.',
+    full: 'Rust гарантирует безопасность памяти без сборщика мусора. На нём пишут браузерные движки (Firefox), операционные системы, блокчейн, инструменты разработчика. Сложный в изучении, но очень востребованный и высокооплачиваемый.',
+    start: [
+      'Установи rustup и прочитай "The Rust Programming Language" (официальная книга)',
+      'Пройди Rustlings — маленькие упражнения для изучения',
+      'Разберись с владением (ownership), заимствованием и временами жизни',
+      'Сделай CLI-утилиту: например, аналог grep или ls'
+    ],
+    tasks: [
+      { title: 'Задача 1: FizzBuzz', desc: 'Классика: выводи числа от 1 до 100, заменяя кратные 3 на "Fizz", 5 на "Buzz", 15 на "FizzBuzz".' },
+      { title: 'Задача 2: Структура Todo', desc: 'Создай структуру Todo с методами add, complete, list.' },
+      { title: 'Задача 3: Чтение файла', desc: 'Напиши программу, которая читает текстовый файл и считает количество слов.' },
+      { title: 'Задача 4: Многопоточный загрузчик', desc: 'Используй tokio для асинхронной загрузки нескольких URL одновременно.' }
+    ]
+  },
+  {
+    id: 'typescript', name: 'TypeScript', tag: 'Веб',
+    short: 'JavaScript + типы. Стандарт в современной frontend-разработке и крупных проектах.',
+    full: 'TypeScript — это надстройка над JavaScript, добавляющая статическую типизацию. Помогает находить ошибки на этапе компиляции, делает код понятнее. Используется везде, где есть JS: React, Angular, Vue, Node.js.',
+    start: [
+      'Сначала выучи основы JavaScript',
+      'Установи Node.js и настрой TypeScript в проекте',
+      'Изучи типы, интерфейсы, дженерики',
+      'Сделай проект на React + TypeScript или NestJS'
+    ],
+    tasks: [
+      { title: 'Задача 1: Типизированная функция', desc: 'Напиши функцию sum, которая принимает только числа и возвращает число. Проверь, что TS ругается на строки.' },
+      { title: 'Задача 2: Интерфейс User', desc: 'Создай интерфейс User с полями name, age, email. Напиши функцию валидации.' },
+      { title: 'Задача 3: Generic-список', desc: 'Сделай дженерик-класс List<T> с методами add, get, getAll.' },
+      { title: 'Задача 4: API-клиент', desc: 'Напиши типизированный клиент для любого публичного API (например, JSONPlaceholder).' }
+    ]
+  },
+  {
+    id: 'php', name: 'PHP', tag: 'Веб',
+    short: 'Классика веб-разработки. На нём работает 75% сайтов, включая WordPress, Facebook.',
+    full: 'PHP — язык для создания динамических сайтов. Несмотря на возраст, остаётся востребованным: Laravel, Symfony, WordPress. Простой старт, много работы во фрилансе и веб-студиях.',
+    start: [
+      'Установи XAMPP или Docker для локального сервера',
+      'Изучи основы синтаксиса, работу с формами и БД',
+      'Освой Laravel — самый популярный PHP-фреймворк',
+      'Сделай свой блог или интернет-магазин'
+    ],
+    tasks: [
+      { title: 'Задача 1: Форма обратной связи', desc: 'Создай HTML-форму, которая отправляет данные на PHP-скрипт и сохраняет их в файл.' },
+      { title: 'Задача 2: Гостевая книга', desc: 'Сделай гостевую книгу с добавлением и отображением сообщений из MySQL.' },
+      { title: 'Задача 3: Авторизация', desc: 'Реализуй простую систему регистрации и входа с сессиями.' },
+      { title: 'Задача 4: REST API', desc: 'На Laravel создай API для списка задач с CRUD-операциями.' }
+    ]
+  },
+  {
+    id: 'swift', name: 'Swift', tag: 'iOS / macOS',
+    short: 'Язык Apple. Создаёт приложения для iPhone, iPad, Mac, Apple Watch.',
+    full: 'Swift — современный язык для разработки под экосистему Apple. Простой, безопасный, быстрый. Если мечтаешь делать приложения в App Store — это твой выбор. Работает вместе с фреймворком SwiftUI для создания интерфейсов.',
+    start: [
+      'Нужен Mac с Xcode (бесплатно в App Store)',
+      'Пройди бесплатный курс "Develop in Swift" от Apple',
+      'Изучи основы: переменные, опционалы, структуры, классы',
+      'Сделай первое приложение в SwiftUI — калькулятор или погоду'
+    ],
+    tasks: [
+      { title: 'Задача 1: Калькулятор', desc: 'Создай простой калькулятор в SwiftUI с базовыми операциями.' },
+      { title: 'Задача 2: Список покупок', desc: 'Приложение со списком покупок: добавление, удаление, отметка купленного.' },
+      { title: 'Задача 3: Погода', desc: 'Используй Weather API для показа погоды в выбранном городе.' },
+      { title: 'Задача 4: Заметки', desc: 'Сделай клон Apple Notes с сохранением в CoreData.' }
+    ]
+  },
+  {
+    id: 'kotlin', name: 'Kotlin', tag: 'Android / Backend',
+    short: 'Современная альтернатива Java. Официальный язык для Android-разработки.',
+    full: 'Kotlin работает на JVM, совместим с Java, но гораздо лаконичнее. Официально рекомендован Google для Android. Также используется для серверов (Ktor, Spring Boot) и мультиплатформенных приложений.',
+    start: [
+      'Установи Android Studio — там уже есть Kotlin',
+      'Пройди официальные курсы от Google "Android Basics in Kotlin"',
+      'Изучи основы: null-safety, data-классы, extension-функции',
+      'Сделай своё первое Android-приложение'
+    ],
+    tasks: [
+      { title: 'Задача 1: Hello Android', desc: 'Создай приложение, которое показывает твоё имя и возраст по кнопке.' },
+      { title: 'Задача 2: Счётчик', desc: 'Приложение с кнопками +1, -1 и сброс, отображающее число.' },
+      { title: 'Задача 3: Список задач', desc: 'To-Do приложение с сохранением в Room (локальная БД).' },
+      { title: 'Задача 4: Погода', desc: 'Приложение с запросом к API погоды и отображением в красивом UI.' }
+    ]
+  },
+  {
+    id: 'ruby', name: 'Ruby', tag: 'Веб',
+    short: 'Элегантный язык для веб-разработки. Фреймворк Rails известен своей мощностью.',
+    full: 'Ruby славится своим красивым синтаксисом и философией "программист должен получать удовольствие". Ruby on Rails позволил создать такие проекты как GitHub, Shopify, Basecamp. Хорош для стартапов и быстрого прототипирования.',
+    start: [
+      'Установи Ruby через rbenv или RVM',
+      'Пройди "Try Ruby" на официальном сайте',
+      'Изучи Ruby on Rails — фреймворк, который делает магию',
+      'Сделай блог или клон Twitter за выходные'
+    ],
+    tasks: [
+      { title: 'Задача 1: Методы массивов', desc: 'Реализуй свои версии map, filter, reduce без использования встроенных методов.' },
+      { title: 'Задача 2: Игра в виселицу', desc: 'Консольная игра Hangman с выбором слова и отгадыванием букв.' },
+      { title: 'Задача 3: Блог на Rails', desc: 'Создай блог с постами, комментариями и авторизацией.' },
+      { title: 'Задача 4: URL-шортнер', desc: 'Сделай клон bit.ly с подсчётом переходов.' }
+    ]
+  }
+];
+
+const specialties = [
+  {
+    id: 'frontend', name: 'Frontend-разработчик', tag: 'Веб',
+    short: 'Создаёт внешнюю часть сайтов и веб-приложений — то, что видит пользователь.',
+    full: 'Frontend-разработчик отвечает за интерфейс: вёрстку, анимации, интерактивность, работу с API. Это творческая профессия на стыке дизайна и кода. Результат своей работы видишь сразу.',
+    tools: [
+      { name: 'HTML/CSS/JS', desc: 'База, без которой никуда' },
+      { name: 'React / Vue / Angular', desc: 'Один из фреймворков на выбор (React — самый популярный)' },
+      { name: 'TypeScript', desc: 'Обязателен в современных проектах' },
+      { name: 'Git + GitHub', desc: 'Контроль версий и портфолио' },
+      { name: 'Figma', desc: 'Для работы с макетами дизайнеров' },
+      { name: 'Webpack / Vite', desc: 'Сборщики проектов' }
+    ],
+    hardware: {
+      os: 'Любая: Windows 10/11, macOS или Linux (Ubuntu). macOS популярен из-за удобства, но не обязателен.',
+      linux: 'Если хочешь Linux — ставь Ubuntu 22.04 LTS или Fedora. Для начала можно использовать WSL2 на Windows.',
+      pc: '8 ГБ ОЗУ минимум, 16 ГБ комфортно. SSD обязателен. Процессор — i5/Ryzen 5 от 8-го поколения.',
+      extras: 'Монитор от 24" (лучше 27"), удобная клавиатура, мышь. Второй монитор — большой плюс.'
+    },
+    tasks: [
+      { title: 'Задача 1: Лендинг', desc: 'Сверстай одностраничный сайт по макету из Figma (адаптивный).' },
+      { title: 'Задача 2: To-Do приложение', desc: 'Создай список задач с добавлением, удалением и фильтрацией на React.' },
+      { title: 'Задача 3: Погода', desc: 'Приложение, показывающее погоду по городу через OpenWeather API.' },
+      { title: 'Задача 4: Интернет-магазин', desc: 'Каталог товаров с корзиной и фильтрами (без реального бэкенда).' }
+    ]
+  },
+  {
+    id: 'backend', name: 'Backend-разработчик', tag: 'Серверы',
+    short: 'Пишет логику серверной части: базы данных, API, бизнес-логику приложений.',
+    full: 'Backend — это "мозги" приложения. Разработчик проектирует архитектуру, работает с БД, делает API для фронтенда, заботится о безопасности и производительности. Выбор языка: Python, Java, Go, Node.js, PHP, C#.',
+    tools: [
+      { name: 'Язык: Python/Java/Go/Node.js', desc: 'Выбери один и углубись' },
+      { name: 'БД: PostgreSQL, MySQL', desc: 'Реляционные БД — основа' },
+      { name: 'Redis, MongoDB', desc: 'NoSQL и кеширование' },
+      { name: 'Docker', desc: 'Контейнеризация — must-have' },
+      { name: 'REST / GraphQL', desc: 'Протоколы взаимодействия' },
+      { name: 'Linux (базово)', desc: 'Уверенное владение терминалом' }
+    ],
+    hardware: {
+      os: 'Linux (Ubuntu 22.04 LTS / Fedora) — предпочтительнее, так как сервера работают на Linux. Windows/macOS тоже подходят.',
+      linux: 'Ubuntu Server или Debian для тестов. Для разработки — Ubuntu Desktop. macOS — отличный выбор (UNIX-подобная).',
+      pc: '16 ГБ ОЗУ (Docker + БД + IDE съедают много). SSD от 512 ГБ. CPU i5/Ryzen 5 и выше.',
+      extras: 'Хороший интернет, второй монитор для удобства. Можно поднять домашний сервер на старом ноутбуке.'
+    },
+    tasks: [
+      { title: 'Задача 1: REST API', desc: 'Сделай API для блога: посты, комментарии, пользователи (CRUD).' },
+      { title: 'Задача 2: Авторизация', desc: 'Реализуй JWT-аутентификацию с регистрацией и входом.' },
+      { title: 'Задача 3: Чат', desc: 'WebSocket-чат с комнатами и историей сообщений.' },
+      { title: 'Задача 4: URL-шортнер', desc: 'Сервис сокращения ссылок со статистикой переходов.' }
+    ]
+  },
+  {
+    id: 'mobile', name: 'Mobile-разработчик', tag: 'Приложения',
+    short: 'Создаёт приложения для смартфонов: iOS, Android или кроссплатформенные.',
+    full: 'Mobile-разработчик делает приложения, которые люди носят в кармане. Можно специализироваться на iOS (Swift), Android (Kotlin) или выбрать кроссплатформу (Flutter, React Native). Высокие зарплаты, много интересных задач.',
+    tools: [
+      { name: 'Swift (iOS) / Kotlin (Android)', desc: 'Нативная разработка' },
+      { name: 'Flutter / React Native', desc: 'Кроссплатформа — один код для двух ОС' },
+      { name: 'Android Studio / Xcode', desc: 'Основные IDE' },
+      { name: 'Firebase', desc: 'Бэкенд без серверной части' },
+      { name: 'Git', desc: 'Обязательно' },
+      { name: 'Figma', desc: 'Для понимания макетов' }
+    ],
+    hardware: {
+      os: 'Для iOS — ТОЛЬКО macOS (Xcode работает только на Mac). Для Android — любая ОС. Для Flutter/React Native — любая.',
+      linux: 'Linux подойдёт для Android-разработки. Для iOS нужен Mac с macOS. Альтернатива — Hackintosh или облачный Mac.',
+      pc: '16 ГБ ОЗУ (эмуляторы тяжёлые). Если iOS — Mac с M1/M2/M3 от 16 ГБ. SSD от 512 ГБ.',
+      extras: 'Физические устройства для тестирования (iPhone, Android-смартфон). Желательно оба.'
+    },
+    tasks: [
+      { title: 'Задача 1: Калькулятор', desc: 'Сделай калькулятор с красивым UI и поддержкой всех операций.' },
+      { title: 'Задача 2: Список задач', desc: 'Приложение с локальным хранением данных и уведомлениями.' },
+      { title: 'Задача 3: Погода', desc: 'Приложение с геолокацией и прогнозом на неделю.' },
+      { title: 'Задача 4: Соцсеть', desc: 'Мини-соцсеть с лентой, лайками и профилями пользователей.' }
+    ]
+  },
+  {
+    id: 'gamedev', name: 'GameDev-разработчик', tag: 'Игры',
+    short: 'Создаёт игры: от мобильных казуалок до AAA-проектов.',
+    full: 'GameDev — это программирование + творчество. Можно работать в инди-команде или крупной студии. Специализации: геймплей, графика, физика, AI для NPC, сетевой код. Выбор движка определяет стек.',
+    tools: [
+      { name: 'Unity + C#', desc: 'Самый популярный движок, особенно для инди' },
+      { name: 'Unreal Engine + C++', desc: 'Для AAA-игр и красивой графики' },
+      { name: 'Godot + GDScript', desc: 'Бесплатный open-source движок' },
+      { name: 'Blender', desc: '3D-моделирование (базово)' },
+      { name: 'Git + Perforce', desc: 'Контроль версий (Perforce в крупных студиях)' },
+      { name: 'Математика', desc: 'Линейная алгебра, физика — очень помогают' }
+    ],
+    hardware: {
+      os: 'Windows — основной выбор для геймдева. macOS — для Unity/Unreal, но с ограничениями. Linux — можно, но не все движки хорошо работают.',
+      linux: 'Linux подойдёт для Godot и некоторых Unity-проектов. Для серьёзной работы лучше Windows.',
+      pc: 'Минимум 16 ГБ ОЗУ, 32 ГБ комфортно. Мощная видеокарта (RTX 3060 и выше). SSD от 1 ТБ (проекты тяжёлые).',
+      extras: 'Хороший монитор с точной цветопередачей. Геймпад для тестирования. Наушники для звука.'
+    },
+    tasks: [
+      { title: 'Задача 1: Платформер', desc: 'Сделай 2D-платформер с прыжками, врагами и уровнями в Unity.' },
+      { title: 'Задача 2: Арканоид', desc: 'Классическая игра с мячом и блоками. Добавь бонусы и уровни.' },
+      { title: 'Задача 3: Top-down shooter', desc: 'Игра с видом сверху, стрельбой и волнами врагов.' },
+      { title: 'Задача 4: 3D-раннер', desc: 'Бесконечный бегун в 3D с генерацией уровня и сбором монет.' }
+    ]
+  },
+  {
+    id: 'datascience', name: 'Data Scientist', tag: 'Данные',
+    short: 'Анализирует данные, строит модели, извлекает инсайты для бизнеса.',
+    full: 'Data Scientist работает на стыке программирования, математики и бизнес-логики. Очищает данные, строит графики, создаёт прогнозные модели. Главный инструмент — Python и его библиотеки.',
+    tools: [
+      { name: 'Python', desc: 'Основной язык' },
+      { name: 'Pandas, NumPy', desc: 'Работа с данными' },
+      { name: 'Matplotlib, Seaborn', desc: 'Визуализация' },
+      { name: 'Scikit-learn', desc: 'Классический ML' },
+      { name: 'SQL', desc: 'Обязательно для работы с БД' },
+      { name: 'Jupyter Notebook', desc: 'Интерактивная среда для анализа' }
+    ],
+    hardware: {
+      os: 'Любая, но Linux/macOS удобнее для работы с терминалом и инструментами. Windows + WSL2 — хороший вариант.',
+      linux: 'Ubuntu 22.04 LTS — стандарт в data science. Много готовых решений и туториалов.',
+      pc: '16 ГБ ОЗУ минимум, 32 ГБ для серьёзных задач. Мощный CPU. Для глубокого обучения — NVIDIA GPU (RTX 3060 и выше, CUDA).',
+      extras: 'Для серьёзных вычислений — облачные GPU (Google Colab, Kaggle, AWS). Второй монитор для графиков и кода.'
+    },
+    tasks: [
+      { title: 'Задача 1: Анализ Titanic', desc: 'Классический Kaggle-датасет. Построй модели, предсказывающие выживание.' },
+      { title: 'Задача 2: Визуализация', desc: 'Возьми данные с kaggle.com и построй 10 разных типов графиков.' },
+      { title: 'Задача 3: Классификация', desc: 'Определи вид цветка по характеристикам (Iris dataset) с помощью sklearn.' },
+      { title: 'Задача 4: Прогноз', desc: 'Предскажи цену квартиры по её параметрам (регрессия).' }
+    ]
+  },
+  {
+    id: 'ml', name: 'Machine Learning / AI', tag: 'ИИ',
+    short: 'Создаёт нейросети, модели ИИ, системы компьютерного зрения и NLP.',
+    full: 'ML/AI-инженер — одна из самых востребованных и высокооплачиваемых специальностей. Работа с нейросетями, LLM, генеративными моделями. Требует сильной математической подготовки.',
+    tools: [
+      { name: 'Python', desc: 'Безальтернативно' },
+      { name: 'PyTorch / TensorFlow', desc: 'Фреймворки для нейросетей' },
+      { name: 'Hugging Face', desc: 'Библиотеки и модели NLP' },
+      { name: 'CUDA, NVIDIA GPU', desc: 'Для обучения моделей' },
+      { name: 'MLOps: Docker, MLflow', desc: 'Вывод моделей в продакшен' },
+      { name: 'Математика', desc: 'Линейная алгебра, матстат, матанализ' }
+    ],
+    hardware: {
+      os: 'Linux (Ubuntu) — стандарт в ML. Windows с WSL2 тоже работает. macOS с Apple Silicon (MPS) — для небольших задач.',
+      linux: 'Ubuntu 22.04 LTS. Обязательно NVIDIA-драйверы и CUDA. Для серверов — headless Ubuntu.',
+      pc: 'NVIDIA GPU — обязательно (RTX 3060 12GB минимум, лучше RTX 4070 Ti и выше). 32 ГБ ОЗУ, лучше 64 ГБ. SSD 1+ ТБ.',
+      extras: 'Для серьёзных задач — облачные GPU (A100, H100 на RunPod, Lambda Labs). Локально — несколько GPU в будущем.'
+    },
+    tasks: [
+      { title: 'Задача 1: Классификатор изображений', desc: 'Обучи нейросеть отличать кошек от собак (CIFAR-10 или свой датасет).' },
+      { title: 'Задача 2: Чат-бот', desc: 'Сделай простого чат-бота на базе Hugging Face Transformers.' },
+      { title: 'Задача 3: Распознавание текста', desc: 'OCR-система для распознавания текста с фото (Tesseract + Python).' },
+      { title: 'Задача 4: Генерация', desc: 'Fine-tune маленькую LLM (например, GPT-2) на своих данных.' }
+    ]
+  },
+  {
+    id: 'devops', name: 'DevOps-инженер', tag: 'Инфраструктура',
+    short: 'Настраивает серверы, автоматизирует развёртывание, следит за надёжностью.',
+    full: 'DevOps — мост между разработкой и эксплуатацией. Автоматизирует всё: от сборки кода до развёртывания в облаке. Работает с Docker, Kubernetes, CI/CD, облачными провайдерами. Очень востребован.',
+    tools: [
+      { name: 'Linux', desc: 'Уверенное владение — основа' },
+      { name: 'Docker, Kubernetes', desc: 'Контейнеры и оркестрация' },
+      { name: 'CI/CD: GitLab CI, GitHub Actions', desc: 'Автоматизация сборки и деплоя' },
+      { name: 'Terraform, Ansible', desc: 'Infrastructure as Code' },
+      { name: 'AWS / GCP / Yandex Cloud', desc: 'Облачные платформы' },
+      { name: 'Мониторинг: Prometheus, Grafana', desc: 'Наблюдаемость систем' }
+    ],
+    hardware: {
+      os: 'Linux — основная рабочая среда. Ubuntu/Fedora для десктопа. Серверы — Ubuntu Server, Debian, CentOS Stream.',
+      linux: 'Ubuntu 22.04 LTS или Fedora — для ежедневной работы. Для серверов — минимальные установки без GUI.',
+      pc: '16 ГБ ОЗУ (виртуалки + Docker), лучше 32 ГБ. SSD 512 ГБ+. CPU i5/Ryzen 5 и выше с поддержкой виртуализации.',
+      extras: 'Много памяти для виртуалок. Можно поднять домашний сервер (старый ПК или Raspberry Pi) для экспериментов.'
+    },
+    tasks: [
+      { title: 'Задача 1: Dockerize приложение', desc: 'Упакуй любое веб-приложение в Docker-контейнер с docker-compose.' },
+      { title: 'Задача 2: CI/CD пайплайн', desc: 'Настрой GitHub Actions: автотесты + деплой на сервер при push.' },
+      { title: 'Задача 3: Kubernetes-кластер', desc: 'Разверни локально minikube и запусти в нём простое приложение.' },
+      { title: 'Задача 4: Мониторинг', desc: 'Подними Prometheus + Grafana и настрой алерты на нагрузку.' }
+    ]
+  },
+  {
+    id: 'security', name: 'Кибербезопасность', tag: 'Security',
+    short: 'Защищает системы от взлома, ищет уязвимости, расследует инциденты.',
+    full: 'Специалист по информационной безопасности: пентестер (этичный хакер), аналитик SOC, криптограф, forensic-эксперт. Работа требует глубоких знаний сетей, ОС и постоянного обучения.',
+    tools: [
+      { name: 'Linux (Kali, Parrot)', desc: 'Специализированные дистрибутивы' },
+      { name: 'Сети: TCP/IP, Wireshark', desc: 'Понимание протоколов' },
+      { name: 'Python, Bash', desc: 'Автоматизация и скрипты' },
+      { name: 'Nmap, Metasploit, Burp Suite', desc: 'Инструменты пентеста' },
+      { name: 'Криптография', desc: 'Основы шифрования' },
+      { name: 'OWASP Top 10', desc: 'Главные уязвимости веб-приложений' }
+    ],
+    hardware: {
+      os: 'Kali Linux или Parrot OS — основные инструменты уже установлены. Для повседневной работы — любая ОС + виртуалки.',
+      linux: 'Kali Linux (для тестов), Ubuntu (для повседневной работы). Запуск через виртуальную машину или WSL2.',
+      pc: '16 ГБ ОЗУ (для виртуалок с Kali + целевой машиной). 32 ГБ комфортно. SSD 512 ГБ+. CPU с поддержкой виртуализации.',
+      extras: 'Много RAM для виртуалок. Сетевая карта для Wi-Fi-аудита (поддерживающая monitor mode). Отдельный ПК/ноут для тестов.'
+    },
+    tasks: [
+      { title: 'Задача 1: TryHackMe', desc: 'Зарегистрируйся на tryhackme.com и пройди путь "Beginner".' },
+      { title: 'Задача 2: CTF', desc: 'Реши несколько задач на hackthebox.com или ctftime.org.' },
+      { title: 'Задача 3: Сканирование', desc: 'Изучи свою домашнюю сеть через nmap (только свои устройства!).', },
+      { title: 'Задача 4: Веб-уязвимости', desc: 'Пройди DVWA (Damn Vulnerable Web App) — легальная песочница для тестов.' }
+    ]
+  },
+  {
+    id: 'qa', name: 'QA-инженер (Тестировщик)', tag: 'Качество',
+    short: 'Находит баги, проверяет качество ПО, пишет автотесты.',
+    full: 'QA — это не только "нажимать кнопки". Современные тестировщики пишут автотесты (Selenium, Playwright), работают с API, настраивают CI. Вход в IT часто начинается именно с QA.',
+    tools: [
+      { name: 'Ручное тестирование', desc: 'Основы: тест-кейсы, чек-листы, баг-репорты' },
+      { name: 'Python/Java + Selenium/Playwright', desc: 'Автотесты UI' },
+      { name: 'Postman, REST API', desc: 'Тестирование API' },
+      { name: 'SQL', desc: 'Проверка данных в БД' },
+      { name: 'Git, Jenkins', desc: 'Интеграция тестов в CI/CD' },
+      { name: 'Jira, TestRail', desc: 'Управление тестированием' }
+    ],
+    hardware: {
+      os: 'Любая. Для тестирования мобильных — нужны и macOS (iOS), и Windows/Android. Для веба — любая.',
+      linux: 'Ubuntu 22.04 LTS подойдёт. Часто тестировщики работают на Windows, так как большинство пользователей именно на ней.',
+      pc: '8 ГБ ОЗУ минимум, 16 ГБ комфортно. Не самый мощный ПК подойдёт — тестирование не ресурсоёмко.',
+      extras: 'Разные устройства для тестирования: смартфоны, планшеты, разные браузеры. Можно использовать BrowserStack для удалённых устройств.'
+    },
+    tasks: [
+      { title: 'Задача 1: Тест-кейсы', desc: 'Напиши 20 тест-кейсов для формы регистрации на любом сайте.' },
+      { title: 'Задача 2: Баг-репорт', desc: 'Найди баг на любом сайте и оформи по стандартам (шаги, ожидаемый/фактический результат).' },
+      { title: 'Задача 3: Автотест', desc: 'Напиши автотест на Python + Selenium: проверка логина на сайте.' },
+      { title: 'Задача 4: API-тесты', desc: 'Протестируй публичный API (JSONPlaceholder) через Postman с коллекцией тестов.' }
+    ]
+  },
+  {
+    id: 'uiux', name: 'UI/UX Дизайнер', tag: 'Дизайн',
+    short: 'Проектирует удобные и красивые интерфейсы сайтов и приложений.',
+    full: 'UI/UX-дизайнер думает о пользователе: как сделать интерфейс понятным, красивым, удобным. Работает в Figma, изучает психологию, проводит исследования. На стыке творчества и анализа.',
+    tools: [
+      { name: 'Figma', desc: 'Основной инструмент (бесплатный)' },
+      { name: 'Adobe Photoshop/Illustrator', desc: 'Для графики и иконок' },
+      { name: 'Principle, Framer', desc: 'Прототипирование и анимации' },
+      { name: 'Notion, Miro', desc: 'Документация и исследования' },
+      { name: 'HTML/CSS (базово)', desc: 'Понимать разработчиков' },
+      { name: 'UX-исследования', desc: 'Опросы, юзабилити-тесты' }
+    ],
+    hardware: {
+      os: 'macOS популярен среди дизайнеров, но Windows тоже отлично подходит. Figma работает в браузере на любой ОС.',
+      linux: 'Linux можно использовать, но некоторые Adobe-продукты не работают. Figma — без проблем.',
+      pc: '16 ГБ ОЗУ (Figma с большими макетами ест память). Хороший процессор. SSD обязателен.',
+      extras: 'Качественный монитор с точной цветопередачей (IPS, sRGB 100%). Графический планшет (Wacom, iPad) — большой плюс.'
+    },
+    tasks: [
+      { title: 'Задача 1: Редизайн', desc: 'Возьми любой сайт и сделай его редизайн в Figma.' },
+      { title: 'Задача 2: Мобильное приложение', desc: 'Спроектируй UI для приложения доставки еды (5-7 экранов).' },
+      { title: 'Задача 3: Дизайн-система', desc: 'Создай набор компонентов: кнопки, формы, карточки, цвета, шрифты.' },
+      { title: 'Задача 4: UX-исследование', desc: 'Проведи 5 интервью с пользователями и на основе этого улучши интерфейс.' }
+    ]
+  },
+  {
+    id: 'embedded', name: 'Embedded-разработчик', tag: 'Железо',
+    short: 'Программирует микроконтроллеры, роботы, IoT-устройства, умную технику.',
+    full: 'Embedded — программирование "железа": от умных часов до промышленных контроллеров и автомобилей. Нужно понимать электронику, работать с памятью и регистрами. C/C++ — основа.',
+    tools: [
+      { name: 'C, C++', desc: 'Основные языки' },
+      { name: 'Arduino, STM32, ESP32', desc: 'Популярные платформы' },
+      { name: 'RTOS (FreeRTOS)', desc: 'Операционные системы реального времени' },
+      { name: 'Схемотехника', desc: 'Понимание электроники' },
+      { name: 'Git, CI/CD', desc: 'Современные практики' },
+      { name: 'Linux Embedded (позже)', desc: 'Для сложных устройств' }
+    ],
+    hardware: {
+      os: 'Любая для разработки. Linux удобен для работы с инструментами (OpenOCD, GDB). Windows — для Arduino IDE.',
+      linux: 'Ubuntu 22.04 LTS — отлично подходит. Много готовых инструментов для embedded.',
+      pc: '8 ГБ ОЗУ достаточно. Не самый мощный ПК подойдёт — компиляция быстрая.',
+      extras: 'Отладочные платы (Arduino, STM32, ESP32), паяльник, мультиметр, осциллограф (позже). Набор проводов, датчиков, светодиодов.'
+    },
+    tasks: [
+      { title: 'Задача 1: Мигающий светодиод', desc: 'Классика: заставь светодиод мигать на Arduino с разной частотой.' },
+      { title: 'Задача 2: Датчик температуры', desc: 'Подключи датчик и выводи показания на Serial-монитор или LCD-экран.' },
+      { title: 'Задача 3: Умный дом', desc: 'Сделай систему на ESP32: управление реле через Wi-Fi с веб-интерфейсом.' },
+      { title: 'Задача 4: Робот', desc: 'Собери робота, объезжающего препятствия (ультразвуковой датчик + моторы).' }
+    ]
+  },
+  {
+    id: 'blockchain', name: 'Blockchain-разработчик', tag: 'Web3',
+    short: 'Создаёт смарт-контракты, DeFi, NFT, dApps на блокчейне.',
+    full: 'Blockchain-разработчик пишет смарт-контракты (Ethereum, Solana, Polygon), создаёт DeFi-протоколы, NFT-платформы, криптокошельки. Одна из самых высокооплачиваемых специальностей, но требует понимания криптографии и экономики.',
+    tools: [
+      { name: 'Solidity', desc: 'Язык смарт-контрактов Ethereum' },
+      { name: 'Rust (Solana)', desc: 'Для блокчейна Solana' },
+      { name: 'Web3.js, Ethers.js', desc: 'Взаимодействие с блокчейном из JS' },
+      { name: 'Hardhat, Foundry', desc: 'Фреймворки для разработки' },
+      { name: 'OpenZeppelin', desc: 'Безопасные шаблоны контрактов' },
+      { name: 'Криптография', desc: 'Хеши, подписи, ключи' }
+    ],
+    hardware: {
+      os: 'Любая. Linux/macOS популярны из-за удобства с терминалом. Windows + WSL2 — хороший вариант.',
+      linux: 'Ubuntu 22.04 LTS — стандарт для разработки. Все инструменты отлично работают.',
+      pc: '16 ГБ ОЗУ, SSD 512 ГБ+. Мощный CPU для компиляции. GPU не критичен (если не майнишь).',
+      extras: 'Аппаратный кошелёк (Ledger, Trezor) для тестов. Немного криптовалюты для тестовых транзакций (testnet — бесплатно).'
+    },
+    tasks: [
+      { title: 'Задача 1: ERC-20 токен', desc: 'Напиши свой токен по стандарту ERC-20 на Solidity.' },
+      { title: 'Задача 2: NFT', desc: 'Создай контракт для выпуска NFT (ERC-721) с минтингом.' },
+      { title: 'Задача 3: DeFi-протокол', desc: 'Сделай простой стейкинг-контракт с начислением процентов.' },
+      { title: 'Задача 4: dApp', desc: 'Создай веб-интерфейс для взаимодействия со своим смарт-контрактом через MetaMask.' }
+    ]
+  }
+];
+
+// ===== ЛОГИКА =====
+const app = document.getElementById('app');
+const backBtn = document.getElementById('backBtn');
+let history = ['home'];
+
+function showPage(page, id = null) {
+  history.push(page + (id ? ':' + id : ''));
+  render(page, id);
+  backBtn.classList.toggle('hidden', history.length <= 1);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goBack() {
+  if (history.length > 1) {
+    history.pop();
+    const prev = history[history.length - 1];
+    const [page, id] = prev.split(':');
+    render(page, id);
+    backBtn.classList.toggle('hidden', history.length <= 1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+function render(page, id) {
+  if (page === 'home') renderHome();
+  else if (page === 'languages') renderLanguages();
+  else if (page === 'language') renderLanguage(id);
+  else if (page === 'specialties') renderSpecialties();
+  else if (page === 'specialty') renderSpecialty(id);
+}
+
+function renderHome() {
+  app.innerHTML = `
+    <div class="page">
+      <div class="hero">
+        <h1>Не знаешь, <span>с чего начать</span> в IT?</h1>
+        <p>Мы поможем разобраться в языках программирования и IT-специальностях. Выбери, что тебе интереснее изучить.</p>
+      </div>
+      <div class="choice-grid">
+        <div class="choice-card" onclick="showPage('languages')">
+          <div class="choice-icon">💻</div>
+          <h2>Языки программирования</h2>
+          <p>Python, JavaScript, Java, C++ и другие. Узнай, какой язык подойдёт именно тебе.</p>
+        </div>
+        <div class="choice-card" onclick="showPage('specialties')">
+          <div class="choice-icon">🎯</div>
+          <h2>IT-специальности</h2>
+          <p>Frontend, GameDev, Data Science, DevOps и другие. Найди своё направление.</p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderLanguages() {
+  const cards = languages.map(l => `
+    <div class="item-card" onclick="showPage('language', '${l.id}')">
+      <span class="tag">${l.tag}</span>
+      <h3>${l.name}</h3>
+      <p>${l.short}</p>
+    </div>
+  `).join('');
+  app.innerHTML = `
+    <div class="page">
+      <h1 class="section-title">Языки программирования</h1>
+      <p class="section-subtitle">Выбери язык, чтобы узнать подробнее: что на нём делают, с чего начать и какие задачи решить.</p>
+      <div class="cards-grid">${cards}</div>
+    </div>
+  `;
+}
+
+function renderLanguage(id) {
+  const l = languages.find(x => x.id === id);
+  if (!l) { renderHome(); return; }
+  app.innerHTML = `
+    <div class="page">
+      <div class="detail-header">
+        <span class="tag">${l.tag}</span>
+        <h1>${l.name}</h1>
+        <p>${l.full}</p>
+      </div>
+
+      <div class="section-block">
+        <h2>С чего начать</h2>
+        <ul>
+          ${l.start.map(s => `<li>${s}</li>`).join('')}
+        </ul>
+      </div>
+
+      <div class="section-block">
+        <h2>Задачки для новичков</h2>
+        ${l.tasks.map(t => `
+          <div class="task-card">
+            <div class="task-title">${t.title}</div>
+            <p>${t.desc}</p>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderSpecialties() {
+  const cards = specialties.map(s => `
+    <div class="item-card" onclick="showPage('specialty', '${s.id}')">
+      <span class="tag">${s.tag}</span>
+      <h3>${s.name}</h3>
+      <p>${s.short}</p>
+    </div>
+  `).join('');
+  app.innerHTML = `
+    <div class="page">
+      <h1 class="section-title">IT-специальности</h1>
+      <p class="section-subtitle">Узнай, чем занимаются специалисты, какие инструменты нужны и какое железо потянет.</p>
+      <div class="cards-grid">${cards}</div>
+    </div>
+  `;
+}
+
+function renderSpecialty(id) {
+  const s = specialties.find(x => x.id === id);
+  if (!s) { renderHome(); return; }
+  app.innerHTML = `
+    <div class="page">
+      <div class="detail-header">
+        <span class="tag">${s.tag}</span>
+        <h1>${s.name}</h1>
+        <p>${s.full}</p>
+      </div>
+
+      <div class="section-block">
+        <h2>Что понадобится изучить</h2>
+        <div class="tools-grid">
+          ${s.tools.map(t => `
+            <div class="tool-item">
+              <div class="tool-name">${t.name}</div>
+              <div class="tool-desc">${t.desc}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="section-block">
+        <h2>Компьютер и система</h2>
+        <ul>
+          <li><strong>Операционная система:</strong> ${s.hardware.os}</li>
+          <li><strong>Какой Linux подойдёт:</strong> ${s.hardware.linux}</li>
+          <li><strong>Требования к ПК:</strong> ${s.hardware.pc}</li>
+          <li><strong>Дополнительно:</strong> ${s.hardware.extras}</li>
+        </ul>
+      </div>
+
+      <div class="section-block">
+        <h2>Задачки для новичков</h2>
+        ${s.tasks.map(t => `
+          <div class="task-card">
+            <div class="task-title">${t.title}</div>
+            <p>${t.desc}</p>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+// Старт
+renderHome();
+</script>
+
+</body>
+</html>
